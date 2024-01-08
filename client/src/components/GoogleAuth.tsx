@@ -13,6 +13,9 @@ const GoogleAuth = () => {
         onError={() => {
           console.log("Login Failed");
         }}
+        type="icon"
+        size="large"
+
         // useOneTap
         // auto_select
       />
