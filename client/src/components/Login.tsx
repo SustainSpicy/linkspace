@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { PublicApi } from "../api";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -31,32 +32,59 @@ const Login = () => {
     }
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Email:
+    <motion.form
+      key="login"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onSubmit={handleSubmit}
+      className="max-w-md mx-auto  "
+    >
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="email"
+        >
+          Email:
+        </label>
         <input
+          className="w-full border rounded-md py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
           type="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
           autoComplete="email"
+          required
         />
-      </label>
+      </div>
 
-      <br />
-      <label>
-        Password:
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="password"
+        >
+          Password:
+        </label>
         <input
+          className="w-full border rounded-md py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
           type="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
           autoComplete="current-password"
+          required
         />
-      </label>
-      <br />
-      <button type="submit">Login</button>
-    </form>
+      </div>
+
+      <div className="text-center">
+        <button
+          type="submit"
+          className="w-full mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+        >
+          Login
+        </button>
+      </div>
+    </motion.form>
   );
 };
 

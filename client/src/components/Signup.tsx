@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { PublicApi } from "../api";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -33,8 +34,15 @@ const Signup = () => {
     }
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
+    <motion.form
+      key="login"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onSubmit={handleSubmit}
+      className="max-w-md mx-auto"
+    >
+      <label className="block mb-2 text-sm text-gray-600">
         Email:
         <input
           type="email"
@@ -42,33 +50,33 @@ const Signup = () => {
           value={formData.email}
           onChange={handleChange}
           autoComplete="email"
+          className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
         />
       </label>
-      <br />
-      <label>
+
+      <label className="block mb-2 text-sm text-gray-600">
         First Name:
         <input
-          type="firstName"
+          type="text"
           name="firstName"
           value={formData.firstName}
           onChange={handleChange}
-          // autoComplete="first-name"
+          className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
         />
       </label>
-      <br />
-      <label>
+
+      <label className="block mb-2 text-sm text-gray-600">
         Last Name:
         <input
-          type="lastName"
+          type="text"
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
-          // autoComplete="lastname"
+          className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
         />
       </label>
-      <br />
-      <br />
-      <label>
+
+      <label className="block mb-2 text-sm text-gray-600">
         Password:
         <input
           type="password"
@@ -76,11 +84,17 @@ const Signup = () => {
           value={formData.password}
           onChange={handleChange}
           autoComplete="current-password"
+          className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
         />
       </label>
-      <br />
-      <button type="submit">Signup</button>
-    </form>
+
+      <button
+        type="submit"
+        className="w-full mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+      >
+        Signup
+      </button>
+    </motion.form>
   );
 };
 
