@@ -5,6 +5,7 @@ import { addUserToDb } from "../utils/dbUtils.js";
 import USER from "../mongodb/schema.js";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import { check, validationResult } from "express-validator";
 
 dotenv.config();
 const router = express.Router();

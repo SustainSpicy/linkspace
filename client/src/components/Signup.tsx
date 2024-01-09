@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { PublicApi } from "../api";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import DOMPurify from "dompurify";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -11,9 +12,10 @@ const Signup = () => {
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const sanitizedInput = DOMPurify.sanitize(e.target.value);
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]: sanitizedInput,
     }));
   };
 
