@@ -23,7 +23,7 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      const { status, data } = await PublicApi.post("/auth/signup", formData, {
+      const { status } = await PublicApi.post("/auth/signup", formData, {
         headers: {
           "Content-Type": "application/json",
         },

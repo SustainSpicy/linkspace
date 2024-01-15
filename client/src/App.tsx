@@ -3,14 +3,14 @@ import CardWrapper from "./components/CardWrapper";
 import GoogleAuth from "./components/GoogleAuth";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import { useGoogleAuth } from "./provider/GoogleAuthProvider";
+// import { useGoogleAuth } from "./provider/GoogleAuthProvider";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AuthFormProps {
   type: number;
 }
 function App() {
-  const { logout } = useGoogleAuth();
+  // const { logout } = useGoogleAuth();
   const [authType, setAuthType] = useState(1);
 
   const AuthForm = ({ type }: AuthFormProps) => {
@@ -37,7 +37,6 @@ function App() {
         <AuthForm type={authType} />
       </CardWrapper>
       <div className="socialAuth pt-8 w-full flex justify-center gap-2">
-        <GoogleAuth />
         <GoogleAuth />
       </div>
       {/* <button type="button" onClick={() => logout()}>
