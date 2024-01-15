@@ -1,5 +1,5 @@
 import React, { ReactNode, createContext, useContext } from "react";
-import { CredentialResponse } from "@react-oauth/google";
+import { CredentialResponse, googleLogout } from "@react-oauth/google";
 import { PublicApi } from "../api";
 
 interface GoogleAuthContextProps {
@@ -7,7 +7,7 @@ interface GoogleAuthContextProps {
 }
 const GoogleAuthContext = createContext({
   clientId: "",
-  handleLoginSuccess: (credentialResponse: CredentialResponse) => {},
+  handleLoginSuccess: (_credentialResponse: CredentialResponse) => {},
   logout: () => {},
 });
 

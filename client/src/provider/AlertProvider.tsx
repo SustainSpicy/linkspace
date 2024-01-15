@@ -1,7 +1,13 @@
-import { createContext } from "vm";
+import { createContext, useContext } from "react";
 
 const AlertContext = createContext({});
 
 const AlertProvider = () => {
-  return <AlertContext.Provider value={{}}></AlertContext.Provider>;
+  const dataToSend = {};
+  return <AlertContext.Provider value={{ dataToSend }}></AlertContext.Provider>;
+};
+export default AlertProvider;
+
+export const useAlertContext = () => {
+  return useContext(AlertContext);
 };

@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { PublicApi } from "../api";
 import { motion } from "framer-motion";
+import DOMPurify from "dompurify";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -9,15 +10,20 @@ const Login = () => {
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const sanitizedInput = DOMPurify.sanitize(e.target.value);
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]: sanitizedInput,
     }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    const { email, password } = formData;
+    if (!email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
     try {
       const { status, data } = await PublicApi.post("/auth/signin", formData, {
         headers: {
