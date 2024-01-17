@@ -2,16 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-}
-
-body {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @apply transition-all duration-200;
+}
+
+body,
+:root {
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
   min-height: 100vh;
   background: antiquewhite;
 }
