@@ -9,13 +9,15 @@
   @apply transition-all duration-200;
 }
 
-body,
-:root {
+#root {
   /* display: flex; */
   /* justify-content: center; */
   /* align-items: center; */
   min-height: 100vh;
   background: antiquewhite;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
 }
 
 .fade-enter {

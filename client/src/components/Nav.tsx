@@ -30,13 +30,14 @@ const navLinks = [
   },
 ];
 const Nav = () => {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(true);
 
   const NavLinks = () => {
     if (isAuth) {
-      return navLinks.map((item) => {
+      return navLinks.map((item, index) => {
         return (
           <NavLink
+            key={index}
             to={`/${item.url}`}
             className={({ isActive }: isActive) =>
               isActive
@@ -54,7 +55,7 @@ const Nav = () => {
     }
   };
   return (
-    <section className="container mx-auto mt-2 w-full p-2 rounded-3xl h-[50px] flex items-center justify-between bg-white">
+    <nav className=" max-w-[1200px] fixed z-50 top-2  w-full p-2 rounded-3xl h-[50px] flex items-center justify-between bg-white">
       <div className="links flex gap-4 items-center">
         <NavLink to="/" className="logo w-10">
           <img src={logo} alt="logo" />
@@ -73,7 +74,7 @@ const Nav = () => {
           </div>
         )}
       </div>
-    </section>
+    </nav>
   );
 };
 
