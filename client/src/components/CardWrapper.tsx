@@ -3,15 +3,16 @@ import { motion } from "framer-motion";
 
 interface CustomCardProps {
   children: ReactNode;
+  className: String;
 }
-const CardWrapper = ({ children }: CustomCardProps) => {
+const CardWrapper = ({ className, children }: CustomCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       layout
-      className="bg-white rounded-lg overflow-hidden shadow-md p-6"
+      className={`${className}bg-white rounded-2xl overflow-hidden shadow-md `}
     >
       {children}
     </motion.div>

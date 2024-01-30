@@ -55,7 +55,7 @@ const Nav = () => {
     }
   };
   return (
-    <nav className=" max-w-[1200px] fixed z-50 top-2  w-full p-2 rounded-3xl h-[50px] flex items-center justify-between bg-white">
+    <nav className=" max-w-[1200px] fixed z-50 top-2  w-full p-2 rounded-3xl h-[80px] flex items-center justify-between bg-white">
       <div className="links flex gap-4 items-center">
         <NavLink to="/" className="logo w-10">
           <img src={logo} alt="logo" />
