@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 interface CustomCardProps {
   children: ReactNode;
-  className: String;
+  className?: String;
 }
 const CardWrapper = ({ className, children }: CustomCardProps) => {
   return (
