@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/profiles", async (req, res) => {
   try {
-    const profiles = await PROFILE.find();
+    const profiles = await PROFILE.getAllProfiles();
     res.status(200).json(profiles);
   } catch (error) {
     console.error(error.message);
@@ -17,7 +17,7 @@ router.get("/profiles", async (req, res) => {
 router.get("/profiles/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const profile = await PROFILE.findById(id);
+    const profile = await PROFILE.getProfileById(id);
     if (!profile) {
       return res.status(404).json({ msg: "Unauthorized action" });
     }
@@ -34,14 +34,15 @@ router.put("/profiles/:id", async (req, res) => {
 
   try {
     //check if profile exists
-    const profile = await PROFILE.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
+    const profile = await PROFILE.profileExist(id);
 
     if (!profile) {
       return res.status(404).json({ error: "Profile not found" });
     }
+
+    const updateProfile = PROFILE.updateProfile(updateData);
+    updateData.save();
+    res.status(200).json(updateData);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ msg: "Internal server error" });

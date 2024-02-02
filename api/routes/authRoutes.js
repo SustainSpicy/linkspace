@@ -4,6 +4,7 @@ import verifySocialAuth from "../utils/googleAuth.js";
 import { authenticateUser } from "../utils/jwt.js";
 import { addUserToDb, createNewProfile } from "../utils/dbUtils.js";
 import USER from "../mongodb/userSchema.js";
+import PROFILE from "../mongodb/profileSchema.js";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import { check, validationResult } from "express-validator";
@@ -38,7 +39,7 @@ router.post("/google", async (req, res) => {
       }
 
       //check if user already exists
-      const userExists = await USER.findOne({ email: payload.email });
+      const userExists = await USER.userExist(payload.email);
 
       if (userExists) {
         //proceed to create session
@@ -51,18 +52,18 @@ router.post("/google", async (req, res) => {
         return res.status(200).json({ accessToken, refreshToken });
       } else {
         //add user to document
-        const newUser = await addUserToDb(
-          {
-            email: payload.email,
-            firstName: payload.given_name,
-            lastName: payload.family_name,
-            authProvider: "google",
-          },
-          session
-        );
-        await createNewProfile({
+        const newUser = await USER.createUser({
+          email: payload.email,
+          firstName: payload.given_name,
+          lastName: payload.family_name,
+          authProvider: "google",
+        });
+        newUser.save({ session });
+        await PROFILE.createProfile({
+          email: newUser.email,
           fullName: `${newUser.firstName} ${newUser.lastName}`,
         });
+
         console.log("User added: ", newUser);
 
         const { _id, __v, ...userData } = newUser.toObject();
@@ -91,29 +92,32 @@ router.post("/signup", async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
+    //check if user already exists
+    const userExists = await USER.userExist(email);
+    if (userExists) {
+      return res.status(400).json({ msg: "Invalid credentials" });
+    }
     await session.withTransaction(async () => {
-      //check if user already exists
-      const userExists = await USER.findOne({ email });
-      if (userExists) {
-        return res.status(400).json({ msg: "Invalid credentials" });
-      }
       // Hash the password before storing it
       const salt = await bcrypt.genSalt(10);
       const hashPassword = await bcrypt.hash(password, salt);
 
       //add user to document
-      const newUser = await addUserToDb({
+      const newUser = await USER.createUser({
         email,
         firstName,
         lastName,
         password: hashPassword,
       });
-      await createNewProfile({
+
+      newUser.save({ session });
+      await PROFILE.createProfile({
+        email: newUser.email,
         fullName: `${newUser.firstName} ${newUser.lastName}`,
       });
-      console.log("User added: ", newUser);
 
-      const { _id, __v, ...userData } = newUser;
+      console.log("User added: ", newUser);
+      const { _id, __v, ...userData } = newUser.toObject();
       const { accessToken, refreshToken } = authenticateUser(req, userData);
 
       return res.status(201).json({ accessToken, refreshToken });
