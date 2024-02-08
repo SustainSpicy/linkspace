@@ -1,4 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
+import { generateRandomString } from "../utils/index.js";
 
 const profileSchema = Schema({
   email: {
@@ -9,22 +10,30 @@ const profileSchema = Schema({
     type: String,
     required: true,
   },
-  username: { type: String, unique: true, trim: true },
+  username: {
+    type: String,
+    unique: true,
+    trim: true,
+    default: () => {
+      return generateRandomString(6);
+    },
+  },
+  isFirstTime: { type: Boolean, default: true },
   links: [
     {
       title: {
         type: String,
-        required: true,
       },
       url: {
         type: String,
-        required: true,
+
         trim: true,
       },
       img: {
         type: String,
         trim: true,
       },
+      type: { type: String, required: true, enum: ["header", "social"] },
     },
   ],
   dob: {
@@ -49,7 +58,7 @@ const profileSchema = Schema({
 });
 
 //check if profile exist
-userSchema.statics.profileExist = async function (email) {
+profileSchema.statics.profileExist = async function (email) {
   try {
     const existingProfile = await this.findOne({ email });
     return existingProfile;
@@ -105,9 +114,20 @@ profileSchema.statics.getProfileByEmail = async function (email) {
 };
 
 //update profile username
-profileSchema.statics.updateProfile = async function (userData) {
+profileSchema.statics.updateProfileUsername = async function (userData) {
   try {
     const profile = await this.updateOne(userData);
+    return profile;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+//update profile links
+profileSchema.statics.updateProfileLinks = async function (linkData) {
+  try {
+    const profile = await this.links.push(linkData);
     return profile;
   } catch (error) {
     console.log(error);

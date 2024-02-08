@@ -2,8 +2,13 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { PublicApi } from "../api";
 import { motion } from "framer-motion";
 import DOMPurify from "dompurify";
+import { setUser } from "../redux/slice/userSlice";
+import { useDispatch } from "react-redux";
+import { useAlertContext } from "../provider/AlertProvider";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const { showAlert } = useAlertContext();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,7 +36,9 @@ const Login = () => {
         },
       });
       if (status === 200) {
-        console.log(data);
+        const { msg, ...userData } = data;
+        dispatch(setUser(userData));
+        showAlert({ text: "User Authenticated", type: "success" });
       }
     } catch (error: any) {
       console.log(error.response.data.msg);
@@ -39,7 +46,7 @@ const Login = () => {
   };
   return (
     <motion.form
-      key="login"
+      key={"signin"}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

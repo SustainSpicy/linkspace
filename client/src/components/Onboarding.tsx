@@ -9,12 +9,9 @@ interface UserStatus {
 }
 interface OnbordingProps extends UserStatus {
   handleUsernameVerify: (username: string) => {};
+  links: string[];
 }
-const Onboarding = ({
-  links,
-  username,
-  handleUsernameVerify,
-}: OnbordingProps) => {
+const Onboarding = ({ links, handleUsernameVerify }: OnbordingProps) => {
   const [error, setError] = useState();
   const [index, setIndex] = useState(0);
   const [usernameInput, setUsernameInput] = useState("");

@@ -16,16 +16,20 @@ const Auth = () => {
   const AuthForm = ({ type }: AuthFormProps) => {
     return (
       <AnimatePresence>
-        {type === 0 ? <Signup /> : type === 1 ? <Login /> : <></>}
+        {type === 0 ? (
+          <Signup key="signup" {...{ setAuthType }} />
+        ) : (
+          <Login key="login" />
+        )}
         <span className="text-gray-600 text-sm">
           {type === 0 ? "Already have an account? " : "Don't have an account? "}
 
-          <a
+          <span
             className="text-blue-500 hover:underline cursor-pointer"
             onClick={() => setAuthType(type === 0 ? 1 : 0)}
           >
-            Register
-          </a>
+            {type === 0 ? "Login " : "Register"}
+          </span>
         </span>
       </AnimatePresence>
     );

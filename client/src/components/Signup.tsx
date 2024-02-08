@@ -2,8 +2,13 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { PublicApi } from "../api";
 import { motion } from "framer-motion";
 import DOMPurify from "dompurify";
+import { useAlertContext } from "../provider/AlertProvider";
 
-const Signup = () => {
+interface signupProps {
+  setAuthType: (prop: number) => void;
+}
+const Signup: React.FC<signupProps> = ({ setAuthType }) => {
+  const { showAlert } = useAlertContext();
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -29,7 +34,8 @@ const Signup = () => {
         },
       });
       if (status === 201) {
-        console.log("User created");
+        showAlert({ text: "User created", type: "success" });
+        setAuthType(1);
       }
     } catch (error: any) {
       console.log(error.response.data.msg);
@@ -37,7 +43,7 @@ const Signup = () => {
   };
   return (
     <motion.form
-      key="login"
+      key={"signup"}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

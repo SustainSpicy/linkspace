@@ -1,51 +1,17 @@
 import express from "express";
-import PROFILE from "../mongodb/profileSchema";
+
+import {
+  getProfileByEmail,
+  updateProfileLinks,
+  updateProfileUser,
+} from "../controllers/profileController.js";
 
 const router = express.Router();
 
-router.get("/profiles", async (req, res) => {
-  try {
-    const profiles = await PROFILE.getAllProfiles();
-    res.status(200).json(profiles);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
+// Get a specific profile by email
+router.get("/:email", getProfileByEmail);
 
-// Get a specific profile by ID
-router.get("/profiles/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const profile = await PROFILE.getProfileById(id);
-    if (!profile) {
-      return res.status(404).json({ msg: "Unauthorized action" });
-    }
-    res.status(200).json(profile);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
+router.put("/:id/user", updateProfileUser);
+router.put("/:id/links", updateProfileLinks);
 
-router.put("/profiles/:id", async (req, res) => {
-  const updateData = req.body;
-  const { id } = req.params;
-
-  try {
-    //check if profile exists
-    const profile = await PROFILE.profileExist(id);
-
-    if (!profile) {
-      return res.status(404).json({ error: "Profile not found" });
-    }
-
-    const updateProfile = PROFILE.updateProfile(updateData);
-    updateData.save();
-    res.status(200).json(updateData);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ msg: "Internal server error" });
-  }
-});
-router.delete();
+export default router;

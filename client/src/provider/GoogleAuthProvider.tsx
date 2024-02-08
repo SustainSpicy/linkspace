@@ -1,6 +1,9 @@
 import React, { ReactNode, createContext, useContext } from "react";
 import { CredentialResponse, googleLogout } from "@react-oauth/google";
 import { PublicApi } from "../api";
+import { useDispatch } from "react-redux";
+import { setUser, logout } from "../redux/slice/userSlice";
+import { useAlertContext } from "./AlertProvider";
 
 interface GoogleAuthContextProps {
   children: ReactNode;
@@ -8,10 +11,12 @@ interface GoogleAuthContextProps {
 const GoogleAuthContext = createContext({
   clientId: "",
   handleLoginSuccess: (_credentialResponse: CredentialResponse) => {},
-  logout: () => {},
+  logoutUser: () => {},
 });
 
 const GoogleAuthProvider: React.FC<GoogleAuthContextProps> = ({ children }) => {
+  const dispatch = useDispatch();
+  const { showAlert } = useAlertContext();
   const clientId = import.meta.env.VITE_CLIENT_ID;
 
   const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
@@ -35,8 +40,9 @@ const GoogleAuthProvider: React.FC<GoogleAuthContextProps> = ({ children }) => {
         );
 
         if (status === 200) {
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("refreshToken", data.refreshToken);
+          const { msg, ...userData } = data;
+          dispatch(setUser(userData));
+          showAlert({ text: "User Authenticated", type: "success" });
         }
       } catch (error) {
         console.error("Error sending credential to backend:", error);
@@ -44,16 +50,15 @@ const GoogleAuthProvider: React.FC<GoogleAuthContextProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+  const logoutUser = () => {
+    dispatch(logout());
     googleLogout();
   };
 
   const sharedData = {
     clientId,
     handleLoginSuccess,
-    logout,
+    logoutUser,
   };
   return (
     <GoogleAuthContext.Provider value={sharedData}>

@@ -11,7 +11,9 @@ import Toggle from "../components/Toggle";
 import { Button, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import Onboarding from "../components/Onboarding";
-import { PublicApi } from "../api";
+import { PrivateApi, PublicApi } from "../api";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 interface UserStatus {
   username: { type: string | null; default: null };
@@ -19,35 +21,29 @@ interface UserStatus {
 }
 const Links = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [isFirstLogin, setIsFirstLogin] = useState<null | UserStatus>(null);
+  const [isFirstLogin, setIsFirstLogin] = useState(null);
+  const currentUser = useSelector((state: RootState) => state.user);
 
-  const getCurrentUser = async (email: string) => {
+  const getCurrentUserProfile = async (email: string) => {
     try {
-      const { status, data } = await PublicApi.get("/profile/" + email);
+      const { status, data } = await PrivateApi.get("/profile/" + email);
       if (status === 200) {
         return data;
       }
     } catch (error: any) {
-      console.log(error.response.data.msg);
-    }
-  };
-  const checkUserFirstLogin = async (email: string) => {
-    try {
-      const { username, links } = await getCurrentUser(email);
-      return { username, links };
-    } catch (error) {
-      // Handle any errors that might occur during the API call
-      console.error("Error checking user first login:", error);
-      return null; // Assuming false for error cases, adjust as needed
+      console.log(error.response);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await checkUserFirstLogin("isrealspicy@gmail.com");
+      const result = await getCurrentUserProfile(currentUser.email);
+      console.log("result ", result);
+
       setIsFirstLogin(result);
     };
     fetchData();
+    // getCurrentUser(currentUser.email);
   }, []);
 
   const handleUsernameVerify = async (username: string) => {
@@ -65,17 +61,17 @@ const Links = () => {
       <div className="relative grid grid-cols-1 sm:grid-cols-3">
         <div className=" col-span-2 bg-gray-400 min-w-0 min-h-screen p-2 flex items-start justify-end">
           <div className="relative flex flex-col justify-start gap-4 max-w-[800px] lg:max-w-[828px] w-full  mt-[100px] sm:px-6">
-            {isFirstLogin?.username ? (
+            {/* {isFirstLogin?.username ? (
               <AlertBar
                 text={`Your Page is live: ${isFirstLogin?.username}`}
                 btnLabel={"Copy URL"}
               />
             ) : (
-              <Onboarding
-                {...isFirstLogin}
-                handleUsernameVerify={handleUsernameVerify}
-              />
-            )}
+              // <Onboarding
+              //   {...isFirstLogin}
+              //   handleUsernameVerify={handleUsernameVerify}
+              // />
+            )} */}
             <button
               type="button"
               className="text-white w-full flex justify-center items-center gap-2 bg-[#177095] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-3xl text-sm px-5 py-3.5  mb-2 "
