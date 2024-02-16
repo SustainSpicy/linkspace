@@ -11,7 +11,7 @@ const app = express();
 
 dotenv.config();
 const corsOptions = {
-  origin: "http://localhost:5173", // Change this to your React app's origin
+  origin: ["http://localhost:5173", "https://nxt-spacefe.onrender.com"], // Change this to your React app's origin
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
@@ -20,13 +20,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
-// app.use(
-//   session({
-//     secret: "your-secret-key",
-//     resave: false,
-//     saveUninitialized: true,
-//   })
-// );
+
 app.use("/auth", authRoutes);
 app.use("/jwt", jwtRoutes);
 app.use("/profile", athenticateToken, profileRoutes);
