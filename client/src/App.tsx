@@ -7,14 +7,17 @@ import {
   useNavigate,
   Navigate,
   Outlet,
+  useLocation,
 } from "react-router-dom";
 import Links from "./pages/Links";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import { useEffect } from "react";
+import useUser from "./hooks/useUser";
 
-const ProtectedRoute = ({ children }: any) => {
-  const currentUser = useSelector((state: RootState) => state.user);
+const ProtectedRoute = () => {
+  const currentUser = useUser();
+  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,22 +25,34 @@ const ProtectedRoute = ({ children }: any) => {
     if (!currentUser || currentUser === null) {
       return navigate("/signin", { replace: true });
     }
-  }, [currentUser, navigate]);
+    // Normalize the pathname
+    const normalizedPathname = location.pathname.replace(/\/$/, ""); // Remove trailing slash if present
+
+    // Check if we are in /register or /auth route
+    if (normalizedPathname === "/signin") {
+      // Check if currentUser is not null
+      if (currentUser !== null) {
+        // Redirect to home page if currentUser is not null and we are in /register or /auth route
+        navigate("/links", { replace: true });
+      }
+    }
+  }, [currentUser, location.pathname, navigate]);
+
   return <Outlet />;
 };
 
 function App() {
   return (
-    <Router>
+    <>
       {/* <Nav /> */}
 
       <Routes>
-        <Route path="/signin" element={<Auth />}></Route>
         <Route path="/" element={<ProtectedRoute />}>
-          <Route path="links" element={<Links />}></Route>
+          <Route path="/signin" element={<Auth />}></Route>
+          <Route path="/links" element={<Links />}></Route>
         </Route>
       </Routes>
-    </Router>
+    </>
   );
 }
 

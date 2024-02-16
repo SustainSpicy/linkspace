@@ -12,14 +12,16 @@ import { Button, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import Onboarding from "../components/Onboarding";
 import { PrivateApi, PublicApi } from "../api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { logout } from "../redux/slice/userSlice";
 
 interface UserStatus {
   username: { type: string | null; default: null };
   links: string[];
 }
 const Links = () => {
+  const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [isFirstLogin, setIsFirstLogin] = useState(null);
   const currentUser = useSelector((state: RootState) => state.user);
@@ -31,20 +33,21 @@ const Links = () => {
         return data;
       }
     } catch (error: any) {
-      console.log(error.response);
+      // console.log(error);
+      return error;
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await getCurrentUserProfile(currentUser.email);
-      console.log("result ", result);
-
-      setIsFirstLogin(result);
+      try {
+        const result = await getCurrentUserProfile(currentUser.email);
+        // console.log("result ", result);
+        setIsFirstLogin(result);
+      } catch (error) {}
     };
     fetchData();
-    // getCurrentUser(currentUser.email);
-  }, []);
+  }, [currentUser]);
 
   const handleUsernameVerify = async (username: string) => {
     try {

@@ -38,7 +38,8 @@ const Signup: React.FC<signupProps> = ({ setAuthType }) => {
         setAuthType(1);
       }
     } catch (error: any) {
-      console.log(error.response.data.msg);
+      console.log(error);
+      showAlert({ text: "Registration Error", type: "danger" });
     }
   };
   return (

@@ -6,15 +6,18 @@ import GoogleAuthProvider from "./provider/GoogleAuthProvider.tsx";
 import { Provider } from "react-redux";
 import store from "./redux/store.ts";
 import AlertProvider from "./provider/AlertProvider.tsx";
+import { BrowserRouter as Router } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <AlertProvider>
-        <GoogleAuthProvider>
-          <App />
-        </GoogleAuthProvider>
-      </AlertProvider>
+      <Router>
+        <AlertProvider>
+          <GoogleAuthProvider>
+            <App />
+          </GoogleAuthProvider>
+        </AlertProvider>
+      </Router>
     </Provider>
   </React.StrictMode>
 );

@@ -5,14 +5,18 @@ import DOMPurify from "dompurify";
 import { setUser } from "../redux/slice/userSlice";
 import { useDispatch } from "react-redux";
 import { useAlertContext } from "../provider/AlertProvider";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { showAlert } = useAlertContext();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  console.log(location);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const sanitizedInput = DOMPurify.sanitize(e.target.value);
@@ -26,7 +30,8 @@ const Login = () => {
     e.preventDefault();
     const { email, password } = formData;
     if (!email || !password) {
-      alert("Please fill in all fields.");
+      showAlert({ text: "Please fill in all fields.", type: "danger" });
+
       return;
     }
     try {
@@ -37,8 +42,15 @@ const Login = () => {
       });
       if (status === 200) {
         const { msg, ...userData } = data;
+
         dispatch(setUser(userData));
-        showAlert({ text: "User Authenticated", type: "success" });
+
+        showAlert({ text: "User authenticated", type: "success" });
+
+        const { from } = location.state || { from: "/links" };
+        console.log(from);
+
+        navigate(from);
       }
     } catch (error: any) {
       console.log(error.response.data.msg);

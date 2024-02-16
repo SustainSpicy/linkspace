@@ -1,5 +1,7 @@
 import axios from "axios";
-import { jwtDecode, JwtPayload } from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/slice/userSlice";
 
 const serverBaseUrl = "http://localhost:5000";
 
@@ -32,15 +34,15 @@ PrivateApi.interceptors.response.use(
     return response;
   },
   async (error) => {
+    // const dispatch = useDispatch();
     const { response } = error;
 
     if (response && response.status === 401) {
       try {
         const refreshToken = localStorage.getItem("refreshToken") || "";
-        console.log("newAccessToken1", refreshToken);
-
         // Decode the refresh token to check its expiration time
         const decodedToken = jwtDecode(refreshToken);
+
         if (
           decodedToken &&
           decodedToken.exp &&
@@ -48,18 +50,36 @@ PrivateApi.interceptors.response.use(
         ) {
           // If the refresh token has expired
           console.log("Refresh token has expired");
-          return Promise.reject("Refresh token has expired");
+          // localStorage.removeItem("user");
+          // localStorage.removeItem("accessToken");
+          // localStorage.removeItem("refreshToken");
+          // return Promise.reject("Refresh token has expired");
         }
 
-        const newAccessToken = await refreshAccessToken(refreshToken);
+        const parsedToken = JSON.parse(refreshToken);
+
+        const newAccessToken = await refreshAccessToken(parsedToken);
+
+        localStorage.setItem("accessToken", JSON.stringify(newAccessToken));
         const originalRequest = error.config;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return axios(originalRequest);
-      } catch (refreshError) {
-        console.error("Error refreshing access token:", refreshError);
+      } catch (refreshError: any) {
+        if (
+          refreshError &&
+          refreshError.response &&
+          refreshError.response.status === 403
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+        }
+        console.log("Error refreshing access token:", refreshError);
       }
     }
+    console.log("response,", response);
+
     return Promise.reject(error);
   }
 );
@@ -67,16 +87,16 @@ PrivateApi.interceptors.response.use(
 async function refreshAccessToken(refreshToken: string) {
   try {
     // Make a request to your server's refresh token endpoint
-    const response = await axios.post(`${serverBaseUrl}/jwt/refreshToken`, {
+    const response = await PublicApi.post(`${serverBaseUrl}/jwt/refreshToken`, {
       refreshToken: refreshToken,
     });
-    // Assuming your server responds with a new access token
+
     const newAccessToken = response.data.accessToken;
-    console.log("newAccessToken ", newAccessToken);
+
     // Return the new access token
     return newAccessToken;
   } catch (error) {
-    console.error("Error refreshing access token:", error);
+    // console.log("Error refreshing access token:", error);
     throw error;
   }
 }

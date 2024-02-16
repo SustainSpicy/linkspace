@@ -35,8 +35,8 @@ const Auth = () => {
     );
   };
   return (
-    <motion.div layout>
-      <CardWrapper>
+    <div className="flex flex-col justify-center">
+      <CardWrapper className={"p-4"}>
         <AuthForm type={authType} />
       </CardWrapper>
       <div className="socialAuth pt-8 w-full flex justify-center gap-2">
@@ -45,7 +45,7 @@ const Auth = () => {
       {/* <button type="button" onClick={() => logout()}>
       Logout
     </button> */}
-    </motion.div>
+    </div>
   );
 };
 
