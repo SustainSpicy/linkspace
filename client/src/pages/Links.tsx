@@ -1,29 +1,29 @@
 import { FaPlus } from "react-icons/fa6";
-import AlertBar from "../components/AlertBar";
+// import AlertBar from "../components/AlertBar";
 import { BsViewStacked } from "react-icons/bs";
 import { FaBoxArchive } from "react-icons/fa6";
 import { BsChevronCompactRight } from "react-icons/bs";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { GoGrabber } from "react-icons/go";
-import { CiEdit } from "react-icons/ci";
-import { IoShareOutline } from "react-icons/io5";
-import Toggle from "../components/Toggle";
+// import { RiDeleteBinLine } from "react-icons/ri";
+// import { GoGrabber } from "react-icons/go";
+// import { CiEdit } from "react-icons/ci";
+// import { IoShareOutline } from "react-icons/io5";
+// import Toggle from "../components/Toggle";
 import { Button, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
-import Onboarding from "../components/Onboarding";
-import { PrivateApi, PublicApi } from "../api";
-import { useDispatch, useSelector } from "react-redux";
+// import Onboarding from "../components/Onboarding";
+import { PrivateApi } from "../api";
+import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { logout } from "../redux/slice/userSlice";
+// import { logout } from "../redux/slice/userSlice";
 
-interface UserStatus {
-  username: { type: string | null; default: null };
-  links: string[];
-}
+// interface UserStatus {
+//   username: { type: string | null; default: null };
+//   links: string[];
+// }
 const Links = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
-  const [isFirstLogin, setIsFirstLogin] = useState(null);
+  const [isFirstLogin, setIsFirstLogin] = useState(true);
   const currentUser = useSelector((state: RootState) => state.user);
 
   const getCurrentUserProfile = async (email: string) => {
@@ -39,6 +39,8 @@ const Links = () => {
   };
 
   useEffect(() => {
+    console.log(isFirstLogin);
+
     const fetchData = async () => {
       try {
         const result = await getCurrentUserProfile(currentUser.email);
@@ -49,16 +51,16 @@ const Links = () => {
     fetchData();
   }, [currentUser]);
 
-  const handleUsernameVerify = async (username: string) => {
-    try {
-      const { status, data } = await PublicApi.get("/profile/" + username);
-      if (status === 200) {
-        return data;
-      }
-    } catch (error: any) {
-      console.log(error.response.data.msg);
-    }
-  };
+  // const handleUsernameVerify = async (username: string) => {
+  //   try {
+  //     const { status, data } = await PublicApi.get("/profile/" + username);
+  //     if (status === 200) {
+  //       return data;
+  //     }
+  //   } catch (error: any) {
+  //     console.log(error.response.data.msg);
+  //   }
+  // };
   return (
     <div className="w-full">
       <div className="relative grid grid-cols-1 sm:grid-cols-3">

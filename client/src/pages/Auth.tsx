@@ -4,7 +4,7 @@ import GoogleAuth from "../components/GoogleAuth";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 // import { useGoogleAuth } from "./provider/GoogleAuthProvider";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 interface AuthFormProps {
   type: number;

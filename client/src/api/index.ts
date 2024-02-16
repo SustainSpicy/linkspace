@@ -1,9 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useDispatch } from "react-redux";
-import { logout } from "../redux/slice/userSlice";
 
-const serverBaseUrl = "http://localhost:5000";
+const serverBaseUrl = import.meta.env.VITE_API_URL;
 
 const PublicApi = axios.create({
   baseURL: serverBaseUrl,

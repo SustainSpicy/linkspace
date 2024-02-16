@@ -30,7 +30,7 @@ const navLinks = [
   },
 ];
 const Nav = () => {
-  const [isAuth, setIsAuth] = useState(true);
+  const [isAuth] = useState(true);
 
   const NavLinks = () => {
     if (isAuth) {
