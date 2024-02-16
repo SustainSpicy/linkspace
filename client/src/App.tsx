@@ -1,17 +1,13 @@
-import Nav from "./components/Nav";
 import Auth from "./pages/Auth";
 import {
   Routes,
-  BrowserRouter as Router,
   Route,
   useNavigate,
-  Navigate,
   Outlet,
   useLocation,
 } from "react-router-dom";
 import Links from "./pages/Links";
-import { useSelector } from "react-redux";
-import { RootState } from "./redux/store";
+
 import { useEffect } from "react";
 import useUser from "./hooks/useUser";
 

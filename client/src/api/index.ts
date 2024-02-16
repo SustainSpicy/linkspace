@@ -1,7 +1,5 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useDispatch } from "react-redux";
-import { logout } from "../redux/slice/userSlice";
 
 const serverBaseUrl = "http://localhost:5000";
 

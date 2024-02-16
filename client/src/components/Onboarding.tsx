@@ -1,4 +1,3 @@
-import { FaPlus } from "react-icons/fa6";
 import CardWrapper from "./CardWrapper";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { useState } from "react";
@@ -12,7 +11,7 @@ interface OnbordingProps extends UserStatus {
   links: string[];
 }
 const Onboarding = ({ links, handleUsernameVerify }: OnbordingProps) => {
-  const [error, setError] = useState();
+  // const [error, setError] = useState();
   const [index, setIndex] = useState(0);
   const [usernameInput, setUsernameInput] = useState("");
 

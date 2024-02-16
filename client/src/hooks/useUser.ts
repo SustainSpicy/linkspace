@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { User } from "../constant/types";
 
 const useUser = () => {
   const currentUserRedux = useSelector((state: RootState) => state.user);
