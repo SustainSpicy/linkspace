@@ -9,10 +9,9 @@ export const refreshToken = (req, res) => {
 
   jwt.verify(refreshToken, secretKey, (err, user) => {
     if (err) return res.sendStatus(403);
-
-    const { exp, ...userData } = user;
+    const { exp, iat, ...userData } = user;
     const newAccessToken = jwt.sign(userData, secretKey, {
-      expiresIn: "3m",
+      expiresIn: "2m",
     });
     res.json({ accessToken: newAccessToken });
   });

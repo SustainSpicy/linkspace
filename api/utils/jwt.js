@@ -12,9 +12,8 @@ export const athenticateToken = (req, res, next) => {
 
   const token = accessToken.split(" ")[1];
 
-  jwt.verify(`${token}`, secretKey, (err, user) => {
+  jwt.verify(token, secretKey, (err, user) => {
     if (err) return res.sendStatus(401);
-
     req.user = user;
     next();
   });
