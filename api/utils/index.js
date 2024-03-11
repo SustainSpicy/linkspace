@@ -7,3 +7,20 @@ export const generateRandomString = (length) => {
   }
   return result;
 };
+
+let lastRequestTime = 0;
+
+let lastRequestTimes = {};
+
+export function limitRequest(req, res, next) {
+  const userId = req.user.email;
+  const currentTime = Date.now();
+  if (
+    lastRequestTimes[userId] &&
+    currentTime - lastRequestTimes[userId] < 120000
+  ) {
+    return res.status(429).send("Too Many Requests. Try again later.");
+  }
+  lastRequestTimes[userId] = currentTime;
+  next();
+}

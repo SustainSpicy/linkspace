@@ -5,6 +5,7 @@ const profileSchema = Schema({
   email: {
     type: String,
     required: true,
+    immutable: true,
   },
   fullName: {
     type: String,
@@ -18,7 +19,21 @@ const profileSchema = Schema({
       return generateRandomString(6);
     },
   },
-  isFirstTime: { type: Boolean, default: true },
+  isFirstLogin: {
+    type: Boolean,
+    default: true,
+  },
+  isOnboarding: {
+    valid: { type: Boolean },
+    todo: {
+      type: [String],
+      default: ["username", "headerLink", "socialLink"],
+      set: function (todo) {
+        this.isOnboarding.valid = todo.length > 0;
+        return todo;
+      },
+    },
+  },
   links: [
     {
       title: {
@@ -26,7 +41,6 @@ const profileSchema = Schema({
       },
       url: {
         type: String,
-
         trim: true,
       },
       img: {
@@ -34,6 +48,7 @@ const profileSchema = Schema({
         trim: true,
       },
       type: { type: String, required: true, enum: ["header", "social"] },
+      display: { type: Boolean, required: true, default: true },
     },
   ],
   dob: {
@@ -57,10 +72,36 @@ const profileSchema = Schema({
   },
 });
 
+profileSchema.post("findOneAndUpdate", async function (result) {
+  const doc = await this.model.findOne({ _id: result._id });
+  const updatedDoc = result;
+  console.log(doc !== updatedDoc);
+  console.log(doc, updatedDoc);
+  if (doc.username !== updatedDoc.username) {
+    doc.isOnboarding.todo = doc.isOnboarding.todo.filter(
+      (item) => item !== "username"
+    );
+  }
+  if (updatedDoc.links) {
+    if (doc.links.some((link) => link.type === "header")) {
+      doc.isOnboarding.todo = doc.isOnboarding.todo.filter(
+        (item) => item !== "headerLink"
+      );
+    }
+    if (doc.links.some((link) => link.type === "social")) {
+      doc.isOnboarding.todo = doc.isOnboarding.todo.filter(
+        (item) => item !== "socialLink"
+      );
+    }
+  }
+  doc.isOnboarding.valid = doc.isOnboarding.todo.length > 0;
+  await doc.save();
+});
+
 //check if profile exist
-profileSchema.statics.profileExist = async function (email) {
+profileSchema.statics.profileExist = async function (data) {
   try {
-    const existingProfile = await this.findOne({ email });
+    const existingProfile = await this.findOne(data);
     return existingProfile;
   } catch (error) {
     throw error;
@@ -73,7 +114,6 @@ profileSchema.statics.createProfile = async function (profileData) {
     const profile = await this.create(profileData);
     return profile;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -84,7 +124,6 @@ profileSchema.statics.getAllProfiles = async function () {
     const profiles = await this.find({});
     return profiles;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -97,7 +136,6 @@ profileSchema.statics.getProfileById = async function (id) {
     const profile = await this.findOne({ _id: id });
     return profile;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -108,29 +146,29 @@ profileSchema.statics.getProfileByEmail = async function (email) {
     const profile = await this.findOne({ email });
     return profile;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
 
 //update profile username
-profileSchema.statics.updateProfileUsername = async function (userData) {
+profileSchema.statics.updateProfileUsername = async function (filter, update) {
   try {
-    const profile = await this.updateOne(userData);
+    const profile = await this.findOneAndUpdate(filter, update);
     return profile;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
 
 //update profile links
-profileSchema.statics.updateProfileLinks = async function (linkData) {
+profileSchema.statics.updateProfileLinks = async function (filter, update) {
   try {
-    const profile = await this.links.push(linkData);
+    const profile = await PROFILE.findOneAndUpdate(filter, {
+      $push: { links: update },
+    });
+
     return profile;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

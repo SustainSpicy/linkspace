@@ -18,6 +18,16 @@ const userSchema = new Schema({
   //   type: Schema.Types.ObjectId,
   //   ref: "Profile",
   // },
+  emailVerification: {
+    token: {
+      type: String,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    expiresAt: { type: Date },
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

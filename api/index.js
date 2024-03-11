@@ -18,7 +18,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.disable("x-powered-by");
 app.use(express.json());
 
 app.use("/auth", authRoutes);

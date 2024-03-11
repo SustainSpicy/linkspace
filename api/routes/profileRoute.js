@@ -1,9 +1,12 @@
 import express from "express";
 
 import {
+  createProfileLinks,
+  deleteProfileLink,
   getProfileByEmail,
+  getProfileByUsername,
   updateProfileLinks,
-  updateProfileUser,
+  updateProfileUserName,
 } from "../controllers/profileController.js";
 
 const router = express.Router();
@@ -11,7 +14,13 @@ const router = express.Router();
 // Get a specific profile by email
 router.get("/:email", getProfileByEmail);
 
-router.put("/:id/user", updateProfileUser);
-router.put("/:id/links", updateProfileLinks);
+//username routes
+router.get("/username/:username", getProfileByUsername);
+router.put("/username/:email", updateProfileUserName);
 
+router.put("/links/:email", createProfileLinks);
+
+router.put("/updatelink/:email", updateProfileLinks);
+
+router.delete("/links/:linkId", deleteProfileLink);
 export default router;
