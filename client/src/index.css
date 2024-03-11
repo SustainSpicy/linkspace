@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: #0a0a0a;
+    --primary: #1a1a1a;
+    --secondary: #333333;
+    --accent: #666666;
+    --text: #ffffff;
+  }
+  /* .theme-light {
+    --background: "#fff";
+    --primary: "#666666";
+    --accent: "#999999";
+    --text: "#000";
+  } */
+}
 * {
   margin: 0;
   padding: 0;
@@ -14,10 +29,14 @@
   /* justify-content: center; */
   /* align-items: center; */
   min-height: 100vh;
-  background: antiquewhite;
+  /* background: antiquewhite; */
   display: flex;
   justify-content: center;
   min-height: 100vh;
+}
+
+body {
+  color-scheme: dark;
 }
 
 .fade-enter {
@@ -39,5 +58,5 @@
 }
 
 .default_button {
-  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 block  p-2.5;
+  @apply bg-gray-50 text-gray-900 text-sm rounded-lg p-2.5 transition-transform transform active:scale-95;
 }

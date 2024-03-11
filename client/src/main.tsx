@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store.ts";
 import AlertProvider from "./provider/AlertProvider.tsx";
 import { BrowserRouter as Router } from "react-router-dom";
+import ErrorBoundary from "./constant/ErrorBoundary.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <Router>
         <AlertProvider>
           <GoogleAuthProvider>
-            <App />
+            <ErrorBoundary fallback="Error occured">
+              <App />
+            </ErrorBoundary>
           </GoogleAuthProvider>
         </AlertProvider>
       </Router>

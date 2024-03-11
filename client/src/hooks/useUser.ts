@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { useEffect, useMemo } from "react";
 
 const useUser = () => {
   const currentUserRedux = useSelector((state: RootState) => state.user);
@@ -7,9 +8,10 @@ const useUser = () => {
     localStorage.getItem("user") ?? "null"
   );
 
-  const currentUser = currentUserRedux || currentUserLocalStorage;
-
-  console.log("currentUser ", currentUser);
+  const currentUser = useMemo(
+    () => currentUserRedux || currentUserLocalStorage,
+    [currentUserRedux, currentUserLocalStorage]
+  );
 
   return currentUser;
 };

@@ -1,31 +1,57 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PrivateApi } from "../api";
-import { User } from "../constant/types";
+import {
+  LinkProps,
+  ProfileProps,
+  User,
+  onboardingProps,
+} from "../constant/types";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/store";
+import useUser from "./useUser";
+import { profileData } from "../constant/dummyData";
+import { getProfile, setProfileData } from "../redux/slice/profileSlice";
 
-const useProfile = (currentUser: User) => {
-  const [currentUserProfile, setCurrentUserProfile] = useState(null);
-  const [error, setError] = useState(null);
+interface HookReturn {
+  currentProfile: ProfileProps | null;
+  links?: LinkProps[] | null;
+  isOnboarding?: onboardingProps | null;
+  profileLoading: boolean;
+  profileError: string | null;
+}
+
+const useProfile = (email: string): HookReturn => {
+  const dispatch = useDispatch<AppDispatch>();
+  const currentProfile = useSelector(
+    (state: RootState) => state.profile.profile
+  );
+  const profileLoading = useSelector(
+    (state: RootState) => state.profile.loading
+  );
+  const profileError = useSelector((state: RootState) => state.profile.error);
+  const [links, setLinks] = useState<LinkProps[] | null>(null);
+  const [isOnboarding, setsOnboarding] = useState<onboardingProps | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { status, data } = await PrivateApi.get(
-          "/profile/" + currentUser.email
-        );
-        if (status === 200) {
-          setCurrentUserProfile(data);
-        }
-      } catch (error: any) {
-        setError(error);
-      }
-    };
-
-    if (currentUser) {
-      fetchData();
+    if (email) {
+      dispatch(getProfile(email));
     }
-  }, [currentUser]);
+  }, [dispatch, email]);
 
-  return { currentUserProfile, error };
+  useEffect(() => {
+    if (currentProfile) {
+      setLinks(currentProfile.links);
+      setsOnboarding(currentProfile.isOnboarding);
+    }
+  }, [currentProfile]);
+
+  return {
+    links,
+    isOnboarding,
+    currentProfile,
+    profileLoading,
+    profileError,
+  };
 };
 
 export default useProfile;

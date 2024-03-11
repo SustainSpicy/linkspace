@@ -13,11 +13,11 @@ const PrivateApi = axios.create({
 
 PrivateApi.interceptors.request.use(
   async (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const user = localStorage.getItem("user");
+    if (user !== null) {
+      const { accessToken } = JSON.parse(user);
 
-    if (accessToken !== null) {
-      const parsedToken = JSON.parse(accessToken);
-      config.headers.Authorization = `Bearer ${parsedToken}`;
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     return config;
@@ -32,51 +32,43 @@ PrivateApi.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // const dispatch = useDispatch();
     const { response } = error;
 
     if (response && response.status === 401) {
       try {
-        const refreshToken = localStorage.getItem("refreshToken") || "";
-        // Decode the refresh token to check its expiration time
-        const decodedToken = jwtDecode(refreshToken);
+        const user = localStorage.getItem("user");
 
-        if (
-          decodedToken &&
-          decodedToken.exp &&
-          decodedToken.exp * 1000 < Date.now()
-        ) {
-          // If the refresh token has expired
-          console.log("Refresh token has expired");
-          // localStorage.removeItem("user");
-          // localStorage.removeItem("accessToken");
-          // localStorage.removeItem("refreshToken");
-          // return Promise.reject("Refresh token has expired");
+        if (user !== null) {
+          const { refreshToken, ...rest } = JSON.parse(user);
+
+          if (refreshToken) {
+            console.log("new access Token");
+
+            const newAccessToken = await refreshAccessToken(refreshToken);
+
+            localStorage.setItem(
+              "user",
+              JSON.stringify({
+                ...rest,
+                refreshToken,
+                accessToken: newAccessToken,
+              })
+            );
+            const originalRequest = error.config;
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+            return axios(originalRequest);
+          } else {
+            // Clear local storage and log user out
+            localStorage.removeItem("user");
+          }
         }
-
-        const parsedToken = JSON.parse(refreshToken);
-
-        const newAccessToken = await refreshAccessToken(parsedToken);
-
-        localStorage.setItem("accessToken", JSON.stringify(newAccessToken));
-        const originalRequest = error.config;
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-        return axios(originalRequest);
       } catch (refreshError: any) {
-        if (
-          refreshError &&
-          refreshError.response &&
-          refreshError.response.status === 403
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-        }
+        localStorage.removeItem("user");
         console.log("Error refreshing access token:", refreshError);
       }
     }
-    console.log("response,", response);
+    // console.log("response,", response);
 
     return Promise.reject(error);
   }

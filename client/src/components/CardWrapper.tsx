@@ -6,15 +6,13 @@ interface CustomCardProps {
   className?: String;
 }
 const CardWrapper = ({ className, children }: CustomCardProps) => {
-  console.log(className);
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       layout
-      className={`${className} bg-white rounded-2xl overflow-hidden shadow-md `}
+      className={`${className} w-fit rounded-2xl overflow-hidden shadow-md `}
     >
       {children}
     </motion.div>

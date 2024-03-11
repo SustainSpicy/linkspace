@@ -2,75 +2,103 @@ import { IoIosLink } from "react-icons/io";
 import { IoShapesOutline } from "react-icons/io5";
 import { BsBarChart } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/img/Terra.png";
-import { useState } from "react";
-type isActive = { isActive: boolean };
+import { useEffect, useState } from "react";
+import useUser from "../hooks/useUser";
+import { logout } from "../redux/slice/userSlice";
+import { useDispatch } from "react-redux";
+import { PATHS } from "../constant";
+
+type IsActiveProps = { isActive: boolean };
 
 const navLinks = [
   {
     title: "Links",
-    url: "links",
+    path: PATHS.LINKS,
     icon: <IoIosLink />,
   },
   {
     title: "Appearance",
-    url: "appearance",
+    path: PATHS.APPEARANCE,
     icon: <IoShapesOutline />,
   },
   {
     title: "Analytics",
-    url: "analytics",
+    path: PATHS.ANALYTICS,
     icon: <BsBarChart />,
   },
   {
     title: "Settings",
-    url: "settings",
+    path: PATHS.SETTINGS,
     icon: <CiSettings />,
   },
 ];
-const Nav = () => {
-  const [isAuth] = useState(true);
 
-  const NavLinks = () => {
-    if (isAuth) {
-      return navLinks.map((item, index) => {
-        return (
+const NavLinks = ({ user }: any) => {
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <ul className="flex gap-4 items-center">
+      {navLinks.map((item, index) => (
+        <li key={index}>
           <NavLink
-            key={index}
-            to={`/${item.url}`}
-            className={({ isActive }: isActive) =>
+            to={item.path}
+            className={({ isActive }: IsActiveProps) =>
               isActive
-                ? "font-bold flex items-center gap-1 "
-                : "font-light flex items-center gap-1 "
+                ? "font-bold flex items-center gap-1 text-text transition duration-100 ease-in-out transform hover:-translate-y-1 hover:scale-105 "
+                : "font-light flex items-center gap-1 text-text transition duration-100 ease-in-out transform hover:-translate-y-1 hover:scale-105 "
             }
           >
             {item.icon}
             <span>{item.title}</span>
           </NavLink>
-        );
-      });
-    } else {
-      return;
-    }
+        </li>
+      ))}
+    </ul>
+  );
+};
+const Nav = () => {
+  const dispatch = useDispatch();
+  const currentUser = useUser();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate(PATHS.HOME);
   };
   return (
-    <nav className=" max-w-[1200px] fixed z-50 top-2  w-full p-2 rounded-3xl h-[80px] flex items-center justify-between bg-white">
+    <nav className="max-w-[1200px] fixed z-50 top-2 w-full p-2 rounded-3xl h-[60px] flex items-center justify-between bg-primary">
       <div className="links flex gap-4 items-center">
-        <NavLink to="/" className="logo w-10">
+        <Link to="/" className="logo w-10">
           <img src={logo} alt="logo" />
-        </NavLink>
-        <NavLinks />
+        </Link>
+        <NavLinks user={currentUser} />
       </div>
       <div className="ops flex gap-4 items-center">
-        {!isAuth ? (
-          <button className="p-2 rounded-2xl bg-pink-400 hover:bg-pink-500 active:bg-pink-950">
-            Signup
-          </button>
+        {!currentUser ? (
+          <Link
+            to={PATHS.AUTH}
+            className="p-2 rounded-3xl border border-white bg-background hover:bg-primary active:bg-pink-950 text-text hover:scale-105 "
+          >
+            Get Started
+          </Link>
         ) : (
+          <button
+            className="p-2 rounded-3xl bg-background hover:bg-primary active:bg-pink-950 text-text"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        )}
+        {currentUser && (
           <div className="avatar w-10 h-10 p-1 cursor-pointer bg-pink-100 rounded-full flex items-center justify-center ">
             <img src="" alt="" />
-            He
+            <span className="text-sm uppercase leading-none tracking-wide ">
+              {currentUser?.fullName?.charAt(0)}
+            </span>
           </div>
         )}
       </div>

@@ -3,18 +3,27 @@ import CardWrapper from "./CardWrapper";
 
 interface AlertProps {
   text: String;
+  type?: String;
   btnLabel: String;
   onClick?: () => void;
 }
-const AlertBar = ({ text, btnLabel, onClick }: AlertProps) => {
+const AlertBar = ({ text, type, btnLabel, onClick }: AlertProps) => {
   return (
-    <CardWrapper className="flex items-center p-4 text-sm text-[#177095]  bg-blue-200 ">
+    <CardWrapper
+      className={` flex items-center p-4 text-sm  text-[#177095]
+      ${type ? "absolute bottom-4 left-[20%] " : ""}  
+      ${
+        type === "danger"
+          ? "bg-red-800 text-white"
+          : "bg-blue-200 text-[#177095]"
+      }
+      `}
+    >
       <HiInformationCircle size={20} className="mr-2" />
       <span className="sr-only">Info</span>
       <div className="w-full flex justify-between">
         <div className="flex flex-col justify-center">
-          <span className="font-medium block"> {text}</span>
-          <span className="font-medium">Alert! </span>
+          <span className={`font-medium block`}> {text}</span>
         </div>
 
         {btnLabel && (
